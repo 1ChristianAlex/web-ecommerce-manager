@@ -1,9 +1,17 @@
 import { validate } from "class-validator";
 import { useMemo, useState } from "react";
 import { DataForm } from "../../../common/model/DataForm";
+import { LoginBody } from "../../../data/input/LoginBody";
+import { LoginRepository } from "../../../data/repository/LoginRepository";
+import { LoginService } from "../../../domain/services/LoginService";
+import { useEcommerceAdapter } from "../../../hooks/useHttpAdapter";
 import { Login } from "./model/Login";
 
 const useLoginForm = () => {
+	const adapter = useEcommerceAdapter();
+
+	const loginService = new LoginService(new LoginRepository(adapter));
+
 	const [dataForm, setDataForm] = useState(new DataForm(new Login(), null));
 
 	const isLoginDisable = useMemo(
@@ -35,7 +43,22 @@ const useLoginForm = () => {
 		);
 	};
 
-	return { dataForm, validateForm, handleLoginChange, isLoginDisable };
+	const handleLogin = async () => {
+		const isValid = await validateForm(dataForm.data);
+
+		if (isValid) {
+			const result = await loginService.doLogin(
+				new LoginBody({
+					email: dataForm.data.email,
+					password: dataForm.data.password,
+				}),
+			);
+
+			console.log({ result });
+		}
+	};
+
+	return { dataForm, handleLoginChange, isLoginDisable, handleLogin };
 };
 
 export { useLoginForm };

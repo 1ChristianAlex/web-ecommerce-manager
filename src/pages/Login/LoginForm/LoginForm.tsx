@@ -5,7 +5,7 @@ import LoginFormErrorAlert from "./LoginFormErrorAlert";
 import { useLoginForm } from "./useLoginForm";
 
 const LoginForm: React.FC = () => {
-	const { dataForm, validateForm, handleLoginChange, isLoginDisable } =
+	const { dataForm, handleLoginChange, isLoginDisable, handleLogin } =
 		useLoginForm();
 	const hasPassError = !!dataForm.erro?.password;
 
@@ -56,7 +56,7 @@ const LoginForm: React.FC = () => {
 			<button
 				type="button"
 				className="btn btn-active btn-primary w-full disabled:bg-base-100"
-				onClick={() => validateForm(dataForm.data)}
+				onClick={() => handleLogin()}
 				disabled={isLoginDisable}
 			>
 				Entrar
